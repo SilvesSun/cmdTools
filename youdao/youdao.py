@@ -38,8 +38,8 @@ def do_request(data):
 
 @click.command()
 @click.argument('from_to', default='ez')
-@click.option('-t', help='the word or text to be translated')
-def translate(from_to, t):
+@click.argument('text_to_translate')
+def translate(from_to, text_to_translate):
     """COMMAND: ez|ze"""
     data = {}
     if from_to == 'ez':
@@ -49,7 +49,7 @@ def translate(from_to, t):
         data['from'] = 'zh-CHS'
         data['to'] = 'EN'
 
-    q = t
+    q = text_to_translate
 
     data['signType'] = 'v3'
     curtime = str(int(time.time()))
@@ -65,9 +65,12 @@ def translate(from_to, t):
     response = do_request(data)
     content = response.content.decode('utf-8')
     content_json = json.loads(content)
-    explains = content_json['basic']['explains']
-    fromat_exp = '\n'.join(explains)
-    print(fromat_exp)
+    try:
+        explains = content_json['basic']['explains']
+        fromat_exp = '\n'.join(explains)
+        print(fromat_exp)
+    except:
+        print('no result found')
 
 
 if __name__ == '__main__':
